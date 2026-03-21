@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About The Artist — InkFury Artz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --red: #ff2a2a;
+      --red-dim: rgba(255,42,42,0.12);
+      --bg: #080808;
+      --bg2: #0f0f0f;
+      --bg3: #141414;
+      --white: #f0ece8;
+      --muted: #6b6561;
+      --mid: #a09890;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Barlow Condensed', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* GRAIN */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* CURSOR */
+    .cursor {
+      position: fixed;
+      width: 12px; height: 12px;
+      background: var(--red);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s;
+      mix-blend-mode: screen;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 36px; height: 36px;
+      border: 1px solid rgba(255,42,42,0.45);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s, border-color 0.3s;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 52px;
+      background: linear-gradient(to bottom, rgba(8,8,8,0.97) 0%, transparent 100%);
+      backdrop-filter: blur(3px);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 4px;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--red); }
+    .nav-links { display: flex; gap: 36px; align-items: center; }
+    .nav-links a {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.25s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 1px;
+      background: var(--red);
+      transition: width 0.3s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active { color: var(--red); }
+    .nav-cta {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 9px 22px;
+      border: 1px solid var(--red);
+      color: var(--red);
+      background: transparent;
+      cursor: none;
+      transition: background 0.25s, color 0.25s;
+      text-decoration: none;
+    }
+    .nav-cta:hover { background: var(--red); color: #000; }
+
+    /* PAGE HERO — SPLIT LAYOUT */
+    .page-hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Left — text */
+    .ph-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 160px 52px 80px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .ph-eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 5px;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .ph-eyebrow::before {
+      content: '';
+      display: block;
+      width: 32px; height: 1px;
+      background: var(--red);
+      flex-shrink: 0;
+    }
+
+    .ph-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(72px, 9vw, 140px);
+      line-height: 0.88;
+      letter-spacing: 3px;
+      margin-bottom: 36px;
+    }
+    .ph-title .outline {
+      display: block;
+      color: transparent;
+      -webkit-text-stroke: 2px var(--white);
+    }
+    .ph-title .accent { color: var(--red); }
+
+    .ph-tagline {
+      font-size: 1.1rem;
+      font-weight: 300;
+      letter-spacing: 1.5px;
+      color: var(--mid);
+      line-height: 1.65;
+      max-width: 380px;
+      margin-bottom: 44px;
+    }
+
+    /* signature line */
+    .ph-sig {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .ph-sig-bar {
+      width: 1px;
+      height: 52px;
+      background: linear-gradient(to bottom, var(--red), transparent);
+    }
+    .ph-sig-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 4px;
+      line-height: 1.1;
+    }
+    .ph-sig-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 3px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* Right — visual panel */
+    .ph-right {
+      position: relative;
+      overflow: hidden;
+    }
+    .ph-right-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 50%, rgba(255,42,42,0.09) 0%, transparent 70%),
+        var(--bg2);
+    }
+    /* large ghost text */
+    .ph-ghost {
+      position: absolute;
+      bottom: -4%;
+      right: -8%;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(120px, 18vw, 260px);
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,42,42,0.08);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      animation: ghostPulse 7s ease-in-out infinite;
+    }
+    @keyframes ghostPulse {
+      0%, 100% { -webkit-text-stroke-color: rgba(255,42,42,0.05); }
+      50%       { -webkit-text-stroke-color: rgba(255,42,42,0.13); }
+    }
+
+    /* cross-hatch decorative grid */
+    .ph-grid-lines {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,42,42,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,42,42,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 0%, transparent 100%);
+    }
+
+    /* floating badge */
+    .ph-badge {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 160px; height: 160px;
+      border: 1px solid rgba(255,42,42,0.2);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-align: center;
+      background: rgba(8,8,8,0.6);
+      backdrop-filter: blur(10px);
+      animation: badgeSpin 20s linear infinite;
+    }
+    @keyframes badgeSpin {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to   { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    .ph-badge::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 1px dashed rgba(255,42,42,0.15);
+    }
+    .badge-inner {
+      animation: badgeSpinReverse 20s linear infinite;
+    }
+    @keyframes badgeSpinReverse {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(-360deg); }
+    }
+    .badge-year {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.6rem;
+      color: var(--red);
+      line-height: 1;
+    }
+    .badge-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 3px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    /* red corner accent lines */
+    .corner-tl, .corner-br {
+      position: absolute;
+      width: 28px; height: 28px;
+    }
+    .corner-tl {
+      top: 30px; left: 30px;
+      border-top: 2px solid var(--red);
+      border-left: 2px solid var(--red);
+    }
+    .corner-br {
+      bottom: 30px; right: 30px;
+      border-bottom: 2px solid var(--red);
+      border-right: 2px solid var(--red);
+    }
+
+    /* MARQUEE */
+    .marquee-strip {
+      background: var(--red);
+      padding: 11px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .marquee-inner {
+      display: inline-flex;
+      animation: marquee 20s linear infinite;
+    }
+    .marquee-inner span {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.9rem;
+      letter-spacing: 5px;
+      color: #000;
+      padding: 0 32px;
+    }
+    .marquee-inner span.dot { color: rgba(0,0,0,0.35); padding: 0 6px; }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* STORY SECTION */
+    .story {
+      padding: 100px 52px;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 80px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      position: relative;
+    }
+
+    .story-nav {
+      position: sticky;
+      top: 100px;
+      align-self: start;
+    }
+    .story-nav .section-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 4px;
+      color: var(--red);
+      margin-bottom: 20px;
+    }
+    .story-nav h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      letter-spacing: 2px;
+      line-height: 1;
+      margin-bottom: 28px;
+    }
+    .story-nav-links { display: flex; flex-direction: column; gap: 12px; }
+    .story-nav-links a {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.57rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.25s, padding-left 0.25s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .story-nav-links a::before {
+      content: '';
+      display: block;
+      width: 0;
+      height: 1px;
+      background: var(--red);
+      transition: width 0.3s;
+      flex-shrink: 0;
+    }
+    .story-nav-links a:hover { color: var(--white); }
+    .story-nav-links a:hover::before { width: 20px; }
+
+    /* Story content blocks */
+    .story-content { display: flex; flex-direction: column; gap: 72px; }
+
+    .story-block { position: relative; }
+
+    .story-block .block-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 4px;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .story-block h4 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.6rem;
+      letter-spacing: 2px;
+      margin-bottom: 18px;
+      line-height: 1;
+    }
+
+    .story-block p {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--mid);
+      line-height: 1.8;
+      letter-spacing: 0.4px;
+      max-width: 620px;
+    }
+    .story-block p + p { margin-top: 16px; }
+
+    /* pull quote */
+    .pull-quote {
+      margin: 36px 0;
+      padding: 28px 36px;
+      border-left: 3px solid var(--red);
+      background: var(--bg2);
+      position: relative;
+    }
+    .pull-quote::before {
+      content: '"';
+      position: absolute;
+      top: -20px; left: 28px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 5rem;
+      color: rgba(255,42,42,0.15);
+      line-height: 1;
+    }
+    .pull-quote p {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--white) !important;
+      letter-spacing: 1.5px;
+      line-height: 1.5;
+    }
+
+    /* SKILLS / MEDIUMS GRID */
+    .mediums-section {
+      padding: 80px 52px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .section-hdr {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 48px;
+    }
+    .section-hdr .label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 5px;
+      color: var(--red);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .section-hdr h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(36px, 4.5vw, 58px);
+      letter-spacing: 2px;
+      line-height: 1;
+    }
+
+    .mediums-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+    .medium-card {
+      background: var(--bg2);
+      padding: 36px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .medium-card::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 100%; height: 2px;
+      background: var(--red);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .medium-card:hover { background: var(--bg3); }
+    .medium-card:hover::before { transform: scaleX(1); }
+
+    .medium-icon {
+      font-size: 2.2rem;
+      margin-bottom: 20px;
+      display: block;
+    }
+    .medium-card h5 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+    .medium-card p {
+      font-size: 0.95rem;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.6;
+      letter-spacing: 0.5px;
+    }
+
+    /* TIMELINE */
+    .timeline-section {
+      padding: 80px 52px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .timeline { display: flex; flex-direction: column; gap: 0; margin-top: 52px; }
+    .tl-item {
+      display: grid;
+      grid-template-columns: 100px 1px 1fr;
+      gap: 0 32px;
+      align-items: start;
+      padding-bottom: 52px;
+      position: relative;
+    }
+    .tl-item:last-child { padding-bottom: 0; }
+
+    .tl-year {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      color: var(--red);
+      letter-spacing: 2px;
+      text-align: right;
+      padding-top: 2px;
+    }
+    .tl-line {
+      position: relative;
+      background: rgba(255,255,255,0.06);
+      align-self: stretch;
+    }
+    .tl-line::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 12px rgba(255,42,42,0.5);
+    }
+    .tl-body { padding-top: 0; padding-left: 8px; }
+    .tl-body h5 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+    .tl-body p {
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--mid);
+      line-height: 1.7;
+      letter-spacing: 0.4px;
+    }
+
+    /* CTA STRIP */
+    .cta-strip {
+      padding: 90px 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+      background: var(--bg2);
+    }
+    .cta-strip h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(38px, 5vw, 72px);
+      letter-spacing: 2px;
+      line-height: 1;
+    }
+    .cta-strip h2 span { color: var(--red); }
+    .cta-actions { display: flex; gap: 16px; flex-shrink: 0; }
+    .btn-primary {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 14px 34px;
+      background: var(--red);
+      color: #000;
+      border: none;
+      cursor: none;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.25s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--white); transform: translateY(-2px); }
+    .btn-ghost {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 13px 32px;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--mid);
+      background: transparent;
+      cursor: none;
+      transition: border-color 0.25s, color 0.25s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-ghost:hover { border-color: var(--white); color: var(--white); }
+
+    /* FOOTER */
+    footer {
+      padding: 44px 52px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 5px;
+      color: var(--muted);
+    }
+    .footer-logo span { color: var(--red); }
+    footer p {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.18);
+      text-transform: uppercase;
+    }
+
+    /* FADE IN */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(28px);
+      animation: fadeUp 0.8s ease forwards;
+    }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.25s; }
+    .delay-3 { animation-delay: 0.4s; }
+    .delay-4 { animation-delay: 0.55s; }
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 900px) {
+      nav { padding: 18px 24px; }
+      .nav-links { gap: 16px; }
+      .page-hero { grid-template-columns: 1fr; min-height: auto; }
+      .ph-left { padding: 120px 24px 52px; }
+      .ph-right { height: 300px; }
+      .story { grid-template-columns: 1fr; padding: 60px 24px; gap: 40px; }
+      .story-nav { position: static; }
+      .mediums-section, .timeline-section { padding: 60px 24px; }
+      .mediums-grid { grid-template-columns: 1fr 1fr; }
+      .cta-strip { flex-direction: column; padding: 60px 24px; text-align: center; }
+      .cta-actions { justify-content: center; }
+      footer { flex-direction: column; gap: 16px; padding: 32px 24px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html"><span>INK</span>FURY ARTZ</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="index.html#gallery">Gallery</a>
+    <a href="about.html" class="active">About</a>
+    <a href="#contact" class="nav-cta">Contact</a>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <!-- Left -->
+  <div class="ph-left">
+    <div class="ph-eyebrow fade-up delay-1">The Artist Behind The Ink</div>
+    <h1 class="ph-title fade-up delay-2">
+      MEET
+      <span class="outline">GILL<span class="accent">IAN</span></span>
+    </h1>
+    <p class="ph-tagline fade-up delay-3">
+      Raw lines. Gritty scenes. A comeback story told through ink and obsession.
+    </p>
+    <div class="ph-sig fade-up delay-4">
+      <div class="ph-sig-bar"></div>
+      <div>
+        <div class="ph-sig-text">Gillian / Gillz</div>
+        <div class="ph-sig-sub">Visual Artist · Inkfury Artz</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right visual -->
+  <div class="ph-right">
+    <div class="ph-right-bg"></div>
+    <div class="ph-grid-lines"></div>
+    <div class="ph-ghost">GZ</div>
+    <div class="corner-tl"></div>
+    <div class="corner-br"></div>
+    <div class="ph-badge">
+      <div class="badge-inner">
+        <div class="badge-year">03+</div>
+        <div class="badge-label">Years of<br>Creating</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-inner">
+    <span>GILLIAN</span><span class="dot">✦</span>
+    <span>INKFURY ARTZ</span><span class="dot">✦</span>
+    <span>RAW ENERGY</span><span class="dot">✦</span>
+    <span>VISUAL STORIES</span><span class="dot">✦</span>
+    <span>GRITTY &amp; EPIC</span><span class="dot">✦</span>
+    <span>THE ARTIST</span><span class="dot">✦</span>
+    <span>GILLIAN</span><span class="dot">✦</span>
+    <span>INKFURY ARTZ</span><span class="dot">✦</span>
+    <span>RAW ENERGY</span><span class="dot">✦</span>
+    <span>VISUAL STORIES</span><span class="dot">✦</span>
+    <span>GRITTY &amp; EPIC</span><span class="dot">✦</span>
+    <span>THE ARTIST</span><span class="dot">✦</span>
+  </div>
+</div>
+
+<!-- STORY -->
+<section class="story" id="about">
+  <!-- Sticky label nav -->
+  <div class="story-nav">
+    <div class="section-num">— 001</div>
+    <h3>THE<br>STORY</h3>
+    <div class="story-nav-links">
+      <a href="#origin">Origin</a>
+      <a href="#comeback">The Comeback</a>
+      <a href="#vision">Vision</a>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="story-content">
+    <div class="story-block" id="origin">
+      <div class="block-label">/ Origin</div>
+      <h4>WHERE IT ALL BEGAN</h4>
+      <p>
+        Art has always been a language — one Gillian has spoken since childhood. 
+        The early years were about exploration: pencils on notebook margins, ink bleeding through thin paper, 
+        characters taking shape from imagination alone.
+      </p>
+      <p>
+        It wasn't formal. It wasn't taught in a classroom. It was raw, instinctive, 
+        and completely personal — the kind of art that exists because it has to.
+      </p>
+    </div>
+
+    <div class="story-block" id="comeback">
+      <div class="block-label">/ The Comeback</div>
+      <h4>RETURNING TO THE INK</h4>
+      <div class="pull-quote">
+        <p>It's been a long time since I started my art journey once again — and this time, I'm not stopping.</p>
+      </div>
+      <p>
+        Life pulls you in different directions. Gillian stepped away from art for a time — 
+        but stepping away only made the pull back stronger. The return wasn't quiet. 
+        It came with intensity, with purpose, and with a clearer vision than ever before.
+      </p>
+      <p>
+        Inkfury Artz was born from that return. Not just a name — a statement. 
+        The fury of creation, the power of ink, and the refusal to be silent.
+      </p>
+    </div>
+
+    <div class="story-block" id="vision">
+      <div class="block-label">/ Vision</div>
+      <h4>WHAT DRIVES THE WORK</h4>
+      <p>
+        Every piece is a visual story. Gritty atmospheres, epic compositions, 
+        characters with weight and presence. The work doesn't ask to be pretty — 
+        it asks to be felt.
+      </p>
+      <p>
+        Gillian draws from a deep well of influences: action, drama, raw human emotion, 
+        and the beauty found in darkness. The goal is always the same — to make something 
+        that stays with you long after you look away.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- MEDIUMS / SKILLS -->
+<section class="mediums-section">
+  <div class="section-hdr">
+    <div>
+      <div class="label">— 002 / Craft</div>
+      <h2>TOOLS &amp; MEDIUMS</h2>
+    </div>
+  </div>
+
+  <div class="mediums-grid">
+    <div class="medium-card">
+      <span class="medium-icon">🖊</span>
+      <h5>Ink & Pen</h5>
+      <p>The core weapon. Fine liners, brush pens, and ballpoints — used to build worlds from scratch.</p>
+    </div>
+    <div class="medium-card">
+      <span class="medium-icon">✏️</span>
+      <h5>Pencil Sketches</h5>
+      <p>Where ideas are born. Loose, gestural, and exploratory — the raw foundation of every finished piece.</p>
+    </div>
+    <div class="medium-card">
+      <span class="medium-icon">🎨</span>
+      <h5>Mixed Media</h5>
+      <p>Combining materials and textures to push beyond what ink alone can express.</p>
+    </div>
+    <div class="medium-card">
+      <span class="medium-icon">💻</span>
+      <h5>Digital</h5>
+      <p>Enhancing traditional work in the digital space — color, depth, and composition refined to the pixel.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="timeline-section">
+  <div class="section-hdr">
+    <div>
+      <div class="label">— 003 / Journey</div>
+      <h2>THE TIMELINE</h2>
+    </div>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-year">EARLY</div>
+      <div class="tl-line"></div>
+      <div class="tl-body">
+        <h5>First Lines</h5>
+        <p>Started drawing instinctively — characters, scenes, and worlds pulled straight from imagination onto paper.</p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">BREAK</div>
+      <div class="tl-line"></div>
+      <div class="tl-body">
+        <h5>The Pause</h5>
+        <p>Life took a different direction. Art stepped back, but never fully disappeared.</p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">NOW</div>
+      <div class="tl-line"></div>
+      <div class="tl-body">
+        <h5>Inkfury Artz — The Return</h5>
+        <p>Back with full force. Inkfury Artz launches as a showcase of everything created since the comeback — and everything still to come.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-strip" id="contact">
+  <h2>WANT TO SEE THE<br><span>FULL GALLERY?</span></h2>
+  <div class="cta-actions">
+    <a href="index.html#gallery" class="btn-primary">View Gallery</a>
+    <a href="index.html" class="btn-ghost">Back to Home</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo"><span>INK</span>FURY ARTZ</div>
+  <p>© 2025 Gillian — All Rights Reserved</p>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring   = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top  = my + 'px';
+  });
+
+  (function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(animateRing);
+  })();
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.story-block, .medium-card, .tl-item');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+        }, i * 70);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  revealEls.forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity 0.65s ease, transform 0.65s ease';
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>
